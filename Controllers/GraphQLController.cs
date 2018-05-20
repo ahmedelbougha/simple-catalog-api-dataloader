@@ -3,9 +3,12 @@ using System.Threading.Tasks;
 using aspnetcoregraphql.Data;
 using aspnetcoregraphql.Models.Operations;
 using GraphQL;
+using GraphQL.DataLoader;
+using GraphQL.Execution;
 using GraphQL.Types;
 using GraphQL.Validation.Complexity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace aspnetcoregraphql.Controllers
 {
@@ -14,11 +17,14 @@ namespace aspnetcoregraphql.Controllers
     {
         private readonly IDocumentExecuter _documentExecuter;
         private readonly ISchema _schema;
-
-        public GraphQLController(IDocumentExecuter documentExecuter,ISchema schema)
+        private readonly DataLoaderDocumentListener _listener;
+        private readonly IServiceProvider _services;
+        public GraphQLController(IDocumentExecuter documentExecuter,ISchema schema, DataLoaderDocumentListener listner, IServiceProvider services)
         {
             _documentExecuter = documentExecuter;
             _schema = schema;
+            // _listener = listner;
+            _services = services;
         }
 
         [HttpPost]
@@ -28,15 +34,18 @@ namespace aspnetcoregraphql.Controllers
             
             var complexityConfiguration = new ComplexityConfiguration {
                 // MaxDepth = 1,
-                MaxComplexity = 85,
-                FieldImpact = 5.0             
+                // MaxComplexity = 85,
+                // FieldImpact = 5.0             
             };
             var executionOptions = new ExecutionOptions { 
                 Schema = _schema, 
                 Query = query.Query,
                 Inputs = query.Variables.ToInputs(),
-                ComplexityConfiguration = complexityConfiguration
+                ComplexityConfiguration = complexityConfiguration,
+                ExposeExceptions = true,
+                
             };
+            executionOptions.Listeners.Add((IDocumentExecutionListener)_services.GetRequiredService(typeof(DataLoaderDocumentListener)));
 
             try
             {

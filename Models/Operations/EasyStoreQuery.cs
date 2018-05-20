@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using aspnetcoregraphql.Data.Repositories;
 using aspnetcoregraphql.Models.Entities;
 using aspnetcoregraphql.Models.Types;
+using GraphQL.DataLoader;
 using GraphQL.Types;
 
 namespace aspnetcoregraphql.Models.Operations

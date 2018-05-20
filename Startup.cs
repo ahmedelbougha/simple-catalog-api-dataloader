@@ -14,6 +14,9 @@ using aspnetcoregraphql.Models.Types;
 using aspnetcoregraphql.Models.Schemas;
 using GraphQL;
 using GraphQL.Types;
+using GraphQL.DataLoader;
+using Microsoft.AspNetCore.Http;
+using System.Diagnostics;
 
 namespace aspnetcoregraphql
 {
@@ -31,6 +34,12 @@ namespace aspnetcoregraphql
         {
             services.AddMvc();
 
+            // services.AddSingleton<DataLoaderContext>();
+            var accessor = new DataLoaderContextAccessor();
+            accessor.Context = new DataLoaderContext();
+            services.AddSingleton<IDataLoaderContextAccessor>(accessor);
+            services.AddSingleton<DataLoaderDocumentListener>();
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
             services.AddSingleton<EasyStoreQuery>();   
             services.AddSingleton<EasyStoreMutation>();   
@@ -52,8 +61,9 @@ namespace aspnetcoregraphql
             services.AddSingleton<OrderStatusesEnum>();          
             services.AddSingleton<OrderCreateInputType>();
             // - //////////////////////////////////////////////////////////
-
-
+            
+            
+ 
             var sp = services.BuildServiceProvider();
             // services.AddScoped<ISchema>(_ => new EasyStoreSchema(type => (GraphType) sp.GetService(type)) {Query = sp.GetService<EasyStoreQuery>()});
             // services.AddScoped<ISchema>(_ => new EasyStoreSchema(new FuncDependencyResolver(type => (GraphType) sp.GetService(type))) {Query = sp.GetService<EasyStoreQuery>()});

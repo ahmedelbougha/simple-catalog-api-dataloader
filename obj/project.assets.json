@@ -12718,11 +12718,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/home/ahmed/projects/graphql-tests/simple-catalog-api/aspnetcoregraphql.csproj",
+      "projectUniqueName": "/home/ahmed/projects/graphql-tests/simple-catalog-api-dataloader/aspnetcoregraphql.csproj",
       "projectName": "aspnetcoregraphql",
-      "projectPath": "/home/ahmed/projects/graphql-tests/simple-catalog-api/aspnetcoregraphql.csproj",
+      "projectPath": "/home/ahmed/projects/graphql-tests/simple-catalog-api-dataloader/aspnetcoregraphql.csproj",
       "packagesPath": "/home/ahmed/.nuget/packages/",
-      "outputPath": "/home/ahmed/projects/graphql-tests/simple-catalog-api/obj/",
+      "outputPath": "/home/ahmed/projects/graphql-tests/simple-catalog-api-dataloader/obj/",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "/usr/share/dotnet/sdk/NuGetFallbackFolder"

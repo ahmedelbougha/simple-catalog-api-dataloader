@@ -4,6 +4,7 @@ using aspnetcoregraphql.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using aspnetcoregraphql.Models.Entities;
+using System.Threading;
 
 namespace aspnetcoregraphql.Data.Repositories
 {
@@ -39,6 +40,14 @@ namespace aspnetcoregraphql.Data.Repositories
         public Task<Customer> GetCustomerAsync(int id)
         {
             return Task.FromResult(_customers.FirstOrDefault(x => x.Id == id));
-        }         
+        }
+
+        public Task<Dictionary<int, Customer>> GetCustomersByIdAsync(IEnumerable<int> customerIds, CancellationToken cancellationToken) 
+        {
+            var joinedCustomers  = _customers.Join(customerIds, c => c.Id, c => c, (c, _) => c);
+
+		    return Task.FromResult(joinedCustomers.ToDictionary(u => u.Id));
+        }  
+
     }
 }
