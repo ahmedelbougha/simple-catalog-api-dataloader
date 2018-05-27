@@ -39,7 +39,7 @@ namespace aspnetcoregraphql
             accessor.Context = new DataLoaderContext();
             services.AddSingleton<IDataLoaderContextAccessor>(accessor);
             services.AddSingleton<DataLoaderDocumentListener>();
-            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            // services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
             services.AddSingleton<EasyStoreQuery>();   
             services.AddSingleton<EasyStoreMutation>();   

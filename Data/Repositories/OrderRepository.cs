@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using aspnetcoregraphql.Models;
 using aspnetcoregraphql.Models.Entities;
+using System.Threading;
 
 namespace aspnetcoregraphql.Data.Repositories
 {
@@ -66,6 +67,11 @@ namespace aspnetcoregraphql.Data.Repositories
         {
             return Task.FromResult(_orders.Where(x => x.CustomerId == customerId).ToList());
         }
+
+        public Task<ILookup<int, Order>> GetOrdersCollectionWithByCustomerIdAsync(IEnumerable<int> customerIds, CancellationToken cancellationToken) 
+        {
+            return Task.FromResult(_orders.ToLookup(x => x.CustomerId));
+        } 
 
         public Task<Order> CreateAsync(Order order) 
         {

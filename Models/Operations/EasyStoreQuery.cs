@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using aspnetcoregraphql.Data.Repositories;
 using aspnetcoregraphql.Models.Entities;
@@ -9,9 +10,10 @@ namespace aspnetcoregraphql.Models.Operations
 {
     public class EasyStoreQuery : ObjectGraphType
     {
-        public EasyStoreQuery(ICategoryRepository categoryRepository, IProductRepository productRepository, ICustomerRepository customerRepository, IOrderRepository orderRepository)
+        public EasyStoreQuery(ICategoryRepository categoryRepository, IProductRepository productRepository, ICustomerRepository customerRepository, IOrderRepository orderRepository, IDataLoaderContextAccessor accessor)
         {
             Name = "StoreQuery";
+            
             Field<CategoryType>(
                 name: "category",
                 description: "specific category data",
@@ -56,6 +58,27 @@ namespace aspnetcoregraphql.Models.Operations
                 description: "list all customers",
                 resolve: context => customerRepository.CustomersAsync().Result
             );
+
+            Field<CustomerType, Customer>()
+            .Name("customerloader")
+            .Argument<NonNullGraphType<IntGraphType>>(Name = "id", Description = "Customer id")            
+            .ResolveAsync(context =>
+            {
+
+                if (accessor.Equals(null)) {
+                    throw new Exception("accessor is null!");
+                }
+                if (accessor.Context.Equals(null)) {
+                    throw new Exception("context is null!");
+                }
+                // Get or add a batch loader with the key "GetCustomersById"
+                // The loader will call GetCustomersByIdAsync for each batch of keys
+                var loader = accessor.Context.GetOrAddBatchLoader<int, Customer>("GetCustomersById", customerRepository.GetCustomersByIdAsync);
+
+                // Add this CustomerId to the pending keys to fetch
+                // The task will complete once the GetCustomersByIdAsync() returns with the batched results
+                return loader.LoadAsync(context.GetArgument<int>("id"));
+            }); 
 
             Field<OrderType>(
                 name: "order",
